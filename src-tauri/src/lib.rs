@@ -1,6 +1,4 @@
-use btleplug::api::{
-    Central, Manager as _, Peripheral as _, ScanFilter,
-};
+use btleplug::api::{Central, Manager as _, Peripheral as _, ScanFilter};
 use btleplug::platform::Manager;
 use futures_util::StreamExt;
 use serde::{Deserialize, Serialize};
@@ -28,7 +26,10 @@ async fn ble_task(app: tauri::AppHandle) -> Result<(), Box<dyn std::error::Error
     // Get Bluetooth adapter
     let manager = Manager::new().await?;
     let adapters = manager.adapters().await?;
-    let adapter = adapters.into_iter().next().ok_or("No Bluetooth adapter found")?;
+    let adapter = adapters
+        .into_iter()
+        .next()
+        .ok_or("No Bluetooth adapter found")?;
 
     println!("Starting BLE scan for device: {}", DEVICE_NAME);
     app.emit("ble-status", "Scanning for device...").ok();
@@ -62,7 +63,8 @@ async fn ble_task(app: tauri::AppHandle) -> Result<(), Box<dyn std::error::Error
     // Connect to device
     device.connect().await?;
     println!("Connected! Discovering services...");
-    app.emit("ble-status", "Connected! Discovering services...").ok();
+    app.emit("ble-status", "Connected! Discovering services...")
+        .ok();
 
     device.discover_services().await?;
 
@@ -83,15 +85,15 @@ async fn ble_task(app: tauri::AppHandle) -> Result<(), Box<dyn std::error::Error
 
     // Listen for notifications
     let mut notification_stream = device.notifications().await?;
-    
+
     while let Some(data) = notification_stream.next().await {
         let notification = BleNotification {
             data: data.value.clone(),
             data_string: String::from_utf8_lossy(&data.value).to_string(),
         };
-        
+
         println!("Received notification: {:?}", notification.data_string);
-        
+
         // Emit event to frontend
         app.emit("ble-notification", notification).ok();
     }
@@ -106,14 +108,14 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![greet])
         .setup(|app| {
             let app_handle = app.handle().clone();
-            
+
             // Start BLE connection on app startup
             tauri::async_runtime::spawn(async move {
                 if let Err(e) = ble_task(app_handle).await {
                     eprintln!("BLE task error: {}", e);
                 }
             });
-            
+
             Ok(())
         })
         .run(tauri::generate_context!())
