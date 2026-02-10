@@ -18,7 +18,7 @@ export const PROBLEMS: Problem[] = [
         id: "pieds",
         label: "Pieds",
         description: "Sensibilité excessive détectée au niveau des pieds",
-        treatments: ["Chatouilles", "Pédicure"],
+        treatments: ["Papouilles", "Pédicure"],
         position: { x: 50, y: 92 },
     },
     {

@@ -39,17 +39,22 @@ async fn ble_task(app: tauri::AppHandle) -> Result<(), Box<dyn std::error::Error
 
     // Find device by name
     let peripherals = adapter.peripherals().await?;
-    let device = peripherals
-        .iter()
-        .find(|p| {
-            if let Ok(Some(props)) = futures::executor::block_on(p.properties()) {
-                props.local_name.as_deref().map_or(false, |name: &str| name.contains(DEVICE_NAME))
-            } else {
-                false
+    let mut device = None;
+
+    for p in &peripherals {
+        if let Ok(Some(props)) = p.properties().await {
+            println!("Checking: {:?}", props.local_name);
+            if let Some(name) = &props.local_name {
+                if name.contains(DEVICE_NAME) {
+                    device = Some(p.clone());
+                    println!("Match found!");
+                    break;
+                }
             }
-        })
-        .ok_or("Device not found")?
-        .clone();
+        }
+    }
+
+    let device = device.ok_or("Device not found")?;
 
     println!("Device found! Connecting...");
     app.emit("ble-status", "Device found! Connecting...").ok();

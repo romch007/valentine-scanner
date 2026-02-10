@@ -4,22 +4,11 @@ import { listen } from "@tauri-apps/api/event";
 import PatientForm from "./components/PatientForm";
 import BodyAnalysis from "./components/BodyAnalysis";
 
-type EventPayload = {
-    data: number[];
-    data_string: string;
-};
-
-type Notification = {
-    timestamp: string;
-    data: string;
-    raw: number[];
-};
-
 function App() {
     const [activeScreen, setActiveScreen] = useState<"form" | "analysis">("form");
 
     const [bleStatus, setBleStatus] = useState<string>("Initializing...");
-    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [notified, setNotified] = useState<boolean>(false);
 
     useEffect(() => {
         // Listen for BLE status updates
@@ -28,17 +17,7 @@ function App() {
         });
 
         // Listen for BLE notifications
-        const unlistenNotifications = listen<EventPayload>("ble-notification", (event) => {
-            const notification: EventPayload = event.payload;
-            setNotifications((prev) => [
-                {
-                    timestamp: new Date().toLocaleTimeString(),
-                    data: notification.data_string,
-                    raw: notification.data,
-                },
-                ...prev.slice(0, 9), // Keep last 10 notifications
-            ]);
-        });
+        const unlistenNotifications = listen("ble-notification", () => setNotified(true));
 
         return () => {
             unlistenStatus.then((fn) => fn());
@@ -49,10 +28,17 @@ function App() {
     return (
         <main>
             <div className="flex flex-col h-screen bg-background">
+                <span className="absolute right-4 bottom-4 text-sm text-muted-foreground">
+                    {bleStatus}
+                </span>
                 {activeScreen === "form" ? (
                     <PatientForm onContinue={() => setActiveScreen("analysis")} />
                 ) : (
-                    <BodyAnalysis onBack={() => setActiveScreen("form")}/>
+                    <BodyAnalysis
+                        onBack={() => setActiveScreen("form")}
+                        notified={notified}
+                        setNotified={setNotified}
+                    />
                 )}
             </div>
         </main>

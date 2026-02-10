@@ -1,15 +1,17 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, Dispatch, SetStateAction, useEffect } from "react";
 import { PROBLEMS, Problem, SavedDiagnosis } from "../data/problems";
 import BodySchema from "./BodySchema";
 import DiagnosisList from "./DiagnosisList";
 
 interface BodyAnalysisProps {
     onBack?: () => void;
+    notified: boolean;
+    setNotified: Dispatch<SetStateAction<boolean>>;
 }
 
 type AnalysisStep = "waiting" | "scanning" | "results";
 
-const BodyAnalysis = ({ onBack }: BodyAnalysisProps) => {
+const BodyAnalysis = ({ onBack, notified, setNotified }: BodyAnalysisProps) => {
     const [step, setStep] = useState<AnalysisStep>("waiting");
     const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
     const [selectedTreatments, setSelectedTreatments] = useState<Set<string>>(new Set());
@@ -22,6 +24,13 @@ const BodyAnalysis = ({ onBack }: BodyAnalysisProps) => {
             return prev;
         });
     }, []);
+
+    useEffect(() => {
+        if (notified) {
+            nextStep();
+            setNotified(false);
+        }
+    }, [notified]);
 
     const toggleTreatment = (t: string) => {
         setSelectedTreatments((prev) => {
@@ -57,12 +66,12 @@ const BodyAnalysis = ({ onBack }: BodyAnalysisProps) => {
 
     return (
         <div className="flex-1 overflow-hidden p-6">
-                <button
-                    onClick={onBack}
-                    className="absolute left-3 flex items-center gap-1 text-sm font-medium text-primary hover:opacity-80 transition-opacity"
-                >
-                    <span className="text-lg">‹</span> Retour
-                </button>
+            <button
+                onClick={onBack}
+                className="absolute left-3 flex items-center gap-1 text-sm font-medium text-primary hover:opacity-80 transition-opacity"
+            >
+                <span className="text-lg">‹</span> Retour
+            </button>
             {/* Top bar */}
             <div className="flex items-center justify-between mb-4 max-w-5.5xl mx-auto">
                 <div>
