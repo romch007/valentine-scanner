@@ -1,0 +1,39 @@
+name: Build for macOS
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: latest
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: |
+          pnpm install
+
+      - name: Build application
+        run: |
+          pnpm tauri build --bundles app
+
+      - name: Upload macOS app
+        uses: actions/upload-artifact@v6
+        with:
+          name: valentine-scanner-macos
+          path: src-tauri/target/release/bundle/macos
