@@ -3,9 +3,13 @@ import { PROBLEMS, Problem, SavedDiagnosis } from "../data/problems";
 import BodySchema from "./BodySchema";
 import DiagnosisList from "./DiagnosisList";
 
+interface BodyAnalysisProps {
+    onBack?: () => void;
+}
+
 type AnalysisStep = "waiting" | "scanning" | "results";
 
-const BodyAnalysis = () => {
+const BodyAnalysis = ({ onBack }: BodyAnalysisProps) => {
     const [step, setStep] = useState<AnalysisStep>("waiting");
     const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
     const [selectedTreatments, setSelectedTreatments] = useState<Set<string>>(new Set());
@@ -53,8 +57,14 @@ const BodyAnalysis = () => {
 
     return (
         <div className="flex-1 overflow-hidden p-6">
+                <button
+                    onClick={onBack}
+                    className="absolute left-3 flex items-center gap-1 text-sm font-medium text-primary hover:opacity-80 transition-opacity"
+                >
+                    <span className="text-lg">‹</span> Retour
+                </button>
             {/* Top bar */}
-            <div className="flex items-center justify-between mb-4 max-w-6xl mx-auto">
+            <div className="flex items-center justify-between mb-4 max-w-5.5xl mx-auto">
                 <div>
                     <h2 className="text-2xl font-semibold text-foreground mb-1">
                         Analyse corporelle
@@ -79,7 +89,7 @@ const BodyAnalysis = () => {
             {/* 3-column layout */}
             <div className="flex gap-4 max-w-6xl mx-auto h-[calc(100%-4rem)]">
                 {/* Left: Saved diagnoses */}
-                <div className="w-64 flex-shrink-0 overflow-y-auto">
+                <div className="w-80 flex-shrink-0 overflow-y-auto">
                     <DiagnosisList diagnoses={diagnoses} onSchedule={scheduleTreatment} />
                 </div>
 
@@ -108,7 +118,7 @@ const BodyAnalysis = () => {
                 </div>
 
                 {/* Right: Selected problem detail */}
-                <div className="w-64 flex-shrink-0 overflow-y-auto">
+                <div className="w-80 flex-shrink-0 overflow-y-auto">
                     {selectedProblem && (
                         <div className="glass-panel rounded-2xl p-5 space-y-4 animate-fade-in">
                             <div>

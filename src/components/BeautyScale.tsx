@@ -61,7 +61,7 @@ const BeautyScale = () => {
                 <div className="glass-panel-strong rounded-2xl p-6 text-center animate-fade-in">
                     <div className="text-4xl font-bold text-primary mb-2">+∞ / 10</div>
                     <p className="text-sm text-muted-foreground">
-                        ⚠️ L'échelle est cassée — le résultat est beaucoup trop élevé.
+                        ⚠️ L'échelle est cassée, le résultat est beaucoup trop élevé.
                     </p>
                     <p className="text-xs text-primary/60 mt-1">Beauté hors normes détectée ♥</p>
                 </div>

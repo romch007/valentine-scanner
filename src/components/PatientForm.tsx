@@ -55,7 +55,7 @@ const PatientForm = ({ onContinue }: PatientFormProps) => {
                     <div className="space-y-2">
                         <label className="block text-sm font-medium text-foreground">Sexe</label>
                         <div className="flex gap-2">
-                            {["Féminin", "Masculin", "Autre"].map((option) => (
+                            {["Féminin", "Masculin"].map((option) => (
                                 <button
                                     key={option}
                                     onClick={() => handleChange("sexe", option)}

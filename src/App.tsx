@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { listen } from "@tauri-apps/api/event";
 
-import Header from "./components/Header";
 import PatientForm from "./components/PatientForm";
 import BodyAnalysis from "./components/BodyAnalysis";
 
@@ -50,11 +49,10 @@ function App() {
     return (
         <main>
             <div className="flex flex-col h-screen bg-background">
-                <Header activeScreen={activeScreen} onBack={() => setActiveScreen("form")} />
                 {activeScreen === "form" ? (
                     <PatientForm onContinue={() => setActiveScreen("analysis")} />
                 ) : (
-                    <BodyAnalysis />
+                    <BodyAnalysis onBack={() => setActiveScreen("form")}/>
                 )}
             </div>
         </main>
