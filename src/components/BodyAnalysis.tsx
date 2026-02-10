@@ -79,7 +79,7 @@ const BodyAnalysis = () => {
             {/* 3-column layout */}
             <div className="flex gap-4 max-w-6xl mx-auto h-[calc(100%-4rem)]">
                 {/* Left: Saved diagnoses */}
-                <div className="w-64 shrink-0 overflow-y-auto">
+                <div className="w-64 flex-shrink-0 overflow-y-auto">
                     <DiagnosisList diagnoses={diagnoses} onSchedule={scheduleTreatment} />
                 </div>
 
@@ -88,7 +88,7 @@ const BodyAnalysis = () => {
                     <div className="glass-panel-strong rounded-3xl p-6 relative overflow-hidden w-full max-w-xs">
                         {step === "scanning" && (
                             <div className="absolute inset-0 pointer-events-none">
-                                <div className="scan-line absolute left-0 right-0 h-0.5 bg-linear-to-r from-transparent via-primary to-transparent opacity-60" />
+                                <div className="scan-line absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary to-transparent opacity-60" />
                             </div>
                         )}
 
@@ -108,7 +108,7 @@ const BodyAnalysis = () => {
                 </div>
 
                 {/* Right: Selected problem detail */}
-                <div className="w-64 shrink-0 overflow-y-auto">
+                <div className="w-64 flex-shrink-0 overflow-y-auto">
                     {selectedProblem && (
                         <div className="glass-panel rounded-2xl p-5 space-y-4 animate-fade-in">
                             <div>
@@ -131,7 +131,7 @@ const BodyAnalysis = () => {
                                             onClick={() => toggleTreatment(t)}
                                             className={`rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200 ${
                                                 selectedTreatments.has(t)
-                                                    ? "bg-primary text-primary-foreground shadow-xs"
+                                                    ? "bg-primary text-primary-foreground shadow-sm"
                                                     : "bg-secondary text-secondary-foreground hover:bg-muted"
                                             }`}
                                         >

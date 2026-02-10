@@ -50,7 +50,7 @@ const DiagnosisList = ({ diagnoses, onSchedule }: DiagnosisListProps) => {
                                     <select
                                         value={selectedTime}
                                         onChange={(e) => setSelectedTime(e.target.value)}
-                                        className="flex-1 rounded-xl bg-secondary px-3 py-2 text-sm text-foreground outline-hidden"
+                                        className="flex-1 rounded-xl bg-secondary px-3 py-2 text-sm text-foreground outline-none"
                                     >
                                         {hours.map((h) => (
                                             <option key={h} value={h}>

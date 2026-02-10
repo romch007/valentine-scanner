@@ -37,7 +37,7 @@ const PatientForm = ({ onContinue }: PatientFormProps) => {
                             value={form.prenom}
                             onChange={(e) => handleChange("prenom", e.target.value)}
                             placeholder="Entrez le prénom"
-                            className="w-full rounded-xl bg-secondary px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-hidden focus:ring-2 focus:ring-primary/30 transition-all"
+                            className="w-full rounded-xl bg-secondary px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                         />
                     </div>
 
@@ -48,7 +48,7 @@ const PatientForm = ({ onContinue }: PatientFormProps) => {
                             value={form.nom}
                             onChange={(e) => handleChange("nom", e.target.value)}
                             placeholder="Entrez le nom"
-                            className="w-full rounded-xl bg-secondary px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-hidden focus:ring-2 focus:ring-primary/30 transition-all"
+                            className="w-full rounded-xl bg-secondary px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                         />
                     </div>
 
@@ -61,7 +61,7 @@ const PatientForm = ({ onContinue }: PatientFormProps) => {
                                     onClick={() => handleChange("sexe", option)}
                                     className={`flex-1 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200 ${
                                         form.sexe === option
-                                            ? "bg-primary text-primary-foreground shadow-xs"
+                                            ? "bg-primary text-primary-foreground shadow-sm"
                                             : "bg-secondary text-secondary-foreground hover:bg-muted"
                                     }`}
                                 >
@@ -78,7 +78,7 @@ const PatientForm = ({ onContinue }: PatientFormProps) => {
                             value={form.age}
                             onChange={(e) => handleChange("age", e.target.value)}
                             placeholder="Entrez l'âge"
-                            className="w-full rounded-xl bg-secondary px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-hidden focus:ring-2 focus:ring-primary/30 transition-all"
+                            className="w-full rounded-xl bg-secondary px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground outline-none focus:ring-2 focus:ring-primary/30 transition-all"
                         />
                     </div>
                 </div>

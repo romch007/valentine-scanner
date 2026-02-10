@@ -5,8 +5,6 @@ import Header from "./components/Header";
 import PatientForm from "./components/PatientForm";
 import BodyAnalysis from "./components/BodyAnalysis";
 
-import "./App.css";
-
 type EventPayload = {
     data: number[];
     data_string: string;
@@ -50,7 +48,7 @@ function App() {
     }, []);
 
     return (
-        <main className="container">
+        <main>
             <div className="flex flex-col h-screen bg-background">
                 <Header activeScreen={activeScreen} onBack={() => setActiveScreen("form")} />
                 {activeScreen === "form" ? (
