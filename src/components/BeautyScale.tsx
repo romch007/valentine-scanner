@@ -1,9 +1,13 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 
 const BeautyScale = () => {
     const [photo, setPhoto] = useState<string | null>(null);
     const [analyzing, setAnalyzing] = useState(false);
     const [result, setResult] = useState(false);
+
+    const resultRef = useRef<HTMLDivElement>(null);
+    const scrollResultIntoView = () =>
+        resultRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
 
     const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -22,6 +26,10 @@ const BeautyScale = () => {
         };
         reader.readAsDataURL(file);
     }, []);
+
+    useEffect(() => {
+        scrollResultIntoView();
+    }, [analyzing]);
 
     return (
         <div className="space-y-4">
@@ -49,7 +57,10 @@ const BeautyScale = () => {
             </label>
 
             {analyzing && (
-                <div className="glass-panel rounded-2xl p-6 text-center animate-fade-in">
+                <div
+                    className="glass-panel rounded-2xl p-6 text-center animate-fade-in"
+                    ref={analyzing ? resultRef : undefined}
+                >
                     <div className="flex items-center justify-center gap-2 text-muted-foreground">
                         <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                         <span className="text-sm">Analyse de l'image en cours…</span>
@@ -58,7 +69,10 @@ const BeautyScale = () => {
             )}
 
             {result && (
-                <div className="glass-panel-strong rounded-2xl p-6 text-center animate-fade-in">
+                <div
+                    className="glass-panel-strong rounded-2xl p-6 text-center animate-fade-in"
+                    ref={result ? resultRef : undefined}
+                >
                     <div className="text-4xl font-bold text-primary mb-2">+∞ / 10</div>
                     <p className="text-sm text-muted-foreground">
                         ⚠️ L'échelle est cassée, le résultat est beaucoup trop élevé.
