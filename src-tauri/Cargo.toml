@@ -1,9 +1,10 @@
 [package]
 name = "valentine-scanner"
 version = "0.1.0"
-description = "A Tauri App"
-authors = ["you"]
-edition = "2021"
+description = "Desktop application to scan and detect any problem your Valentine may have"
+authors = ["Logan Lucas <logan.lucas83@gmail.com>"]
+edition = "2024"
+license = "GPL-3.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
