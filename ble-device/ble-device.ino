@@ -8,13 +8,17 @@
 
 #define BUTTON_PIN 11
 
-BLEServer* pServer = NULL;
+#define LED_PIN 5
+
+BLEServer* pServer                  = NULL;
 BLECharacteristic* pButtonPressChar = NULL;
 
-bool deviceConnected = false;
+bool deviceConnected    = false;
 bool oldDeviceConnected = false;
-bool lastButtonState = HIGH;
-bool dirty = 0;
+bool lastButtonState    = HIGH;
+bool dirty              = 0;
+
+rmt_data_t led_data[24];
 
 class MyServerCallbacks : public BLEServerCallbacks {
   void onConnect(BLEServer* pServer) {
@@ -28,10 +32,43 @@ class MyServerCallbacks : public BLEServerCallbacks {
   }
 };
 
+void setLED(uint8_t r, uint8_t g, uint8_t b) {
+  uint8_t pixels[3] = { g, r, b };
+
+  int i = 0;
+  for (int byte_idx = 0; byte_idx < 3; byte_idx++) {
+    for (int bit = 0; bit < 8; bit++) {
+      if (pixels[byte_idx] & (1 << (7 - bit))) {
+        // Send '1' bit: 800ns high, 400ns low
+        led_data[i].level0    = 1;
+        led_data[i].duration0 = 8;
+        led_data[i].level1    = 0;
+        led_data[i].duration1 = 4;
+      } else {
+        // Send '0' bit: 400ns high, 800ns low
+        led_data[i].level0    = 1;
+        led_data[i].duration0 = 4;
+        led_data[i].level1    = 0;
+        led_data[i].duration1 = 8;
+      }
+      i++;
+    }
+  }
+
+  rmtWrite(LED_PIN, led_data, 24, RMT_WAIT_FOR_EVER);
+}
+
 void setup() {
   Serial.begin(115200);
 
   pinMode(BUTTON_PIN, INPUT_PULLUP);
+
+  if (!rmtInit(LED_PIN, RMT_TX_MODE, RMT_MEM_NUM_BLOCKS_1, 10000000)) {
+    Serial.println("RMT init failed!");
+    while (1) {}
+  }
+  setLED(50, 0, 0);
+  rmtDeinit(LED_PIN);
 
   Serial.println("Starting BLE Scanner Server...");
 
@@ -46,8 +83,9 @@ void setup() {
 
   // Temperature Characteristic (READ + NOTIFY)
   pButtonPressChar = pService->createCharacteristic(
-      BUTTON_PRESS_CHAR_UUID,
-      BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY);
+    BUTTON_PRESS_CHAR_UUID,
+    BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_NOTIFY
+  );
   pButtonPressChar->addDescriptor(new BLE2902());
 
   pService->start();
@@ -68,10 +106,10 @@ void loop() {
 
   static unsigned long lastButtonPressMs = 0;
   if (lastButtonState == LOW && buttonState == HIGH && deviceConnected) {
-      lastButtonPressMs = millis();
-      pButtonPressChar->setValue((uint8_t*)&buttonState, 1);
-      pButtonPressChar->notify();
-      dirty = 1;
+    lastButtonPressMs = millis();
+    pButtonPressChar->setValue((uint8_t*) &buttonState, 1);
+    pButtonPressChar->notify();
+    dirty = 1;
   }
 
   lastButtonState = buttonState;
@@ -79,7 +117,7 @@ void loop() {
   if (dirty && millis() - lastButtonPressMs > 500) {
     dirty = 0;
 
-    pButtonPressChar->setValue((uint8_t*)&buttonState, 0);
+    pButtonPressChar->setValue((uint8_t*) &buttonState, 0);
   }
 
   // Handle disconnection
