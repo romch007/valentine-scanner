@@ -10,6 +10,9 @@ function App() {
     const [bleStatus, setBleStatus] = useState<string>("Initializing...");
     const [notified, setNotified] = useState<boolean>(false);
 
+    const [bleProblem, setBleProblem] = useState<boolean>(false);
+    const [bleMocked, setBleMocked] = useState<boolean>(false);
+
     useEffect(() => {
         // Listen for BLE status updates
         const unlistenStatus = listen<string>("ble-status", (event) => {
@@ -25,12 +28,38 @@ function App() {
         };
     }, []);
 
+    useEffect(() => {
+        let statusTimeoutId: NodeJS.Timeout | undefined;
+        if (bleStatus === "Initializing...") {
+            statusTimeoutId = setTimeout(() => {
+                if (bleStatus === "Initializing...") {
+                    setBleProblem(true);
+                }
+            }, 10000);
+        } else if (statusTimeoutId) clearTimeout(statusTimeoutId);
+
+        return () => {
+            if (statusTimeoutId) clearTimeout(statusTimeoutId);
+        };
+    }, [bleStatus]);
+
     return (
         <main>
             <div className="flex flex-col h-screen bg-background">
-                <span className="absolute right-4 bottom-4 text-sm text-muted-foreground">
-                    {bleStatus}
-                </span>
+                <div className="flex flex-col absolute right-4 bottom-4 text-right text-sm text-muted-foreground">
+                    {!bleProblem ? null : (
+                        <div>
+                            <span>BLE seems to have problems, enable mock: </span>
+                            <input
+                                type="checkbox"
+                                className="accent-primary"
+                                checked={bleMocked}
+                                onChange={() => setBleMocked((prev) => !prev)}
+                            />
+                        </div>
+                    )}
+                    <span>{bleStatus}</span>
+                </div>
                 {activeScreen === "form" ? (
                     <PatientForm onContinue={() => setActiveScreen("analysis")} />
                 ) : (
@@ -38,6 +67,7 @@ function App() {
                         onBack={() => setActiveScreen("form")}
                         notified={notified}
                         setNotified={setNotified}
+                        bleMocked={bleMocked}
                     />
                 )}
             </div>

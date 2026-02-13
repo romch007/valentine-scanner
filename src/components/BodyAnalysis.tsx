@@ -7,11 +7,12 @@ interface BodyAnalysisProps {
     onBack?: () => void;
     notified: boolean;
     setNotified: Dispatch<SetStateAction<boolean>>;
+    bleMocked: boolean;
 }
 
 type AnalysisStep = "waiting" | "scanning" | "results";
 
-const BodyAnalysis = ({ onBack, notified, setNotified }: BodyAnalysisProps) => {
+const BodyAnalysis = ({ onBack, notified, setNotified, bleMocked }: BodyAnalysisProps) => {
     const [step, setStep] = useState<AnalysisStep>("waiting");
     const [selectedProblem, setSelectedProblem] = useState<Problem | null>(null);
     const [selectedTreatments, setSelectedTreatments] = useState<Set<string>>(new Set());
@@ -68,24 +69,26 @@ const BodyAnalysis = ({ onBack, notified, setNotified }: BodyAnalysisProps) => {
         <div className="flex-1 overflow-hidden p-6">
             <button
                 onClick={onBack}
-                className="absolute left-3 flex items-center gap-1 text-sm font-medium text-primary hover:opacity-80 transition-opacity"
+                className="absolute left-4 flex items-center gap-1 text-sm font-medium text-primary hover:opacity-80 transition-opacity"
             >
                 <span className="text-lg">‹</span> Retour
             </button>
             {/* Top bar */}
-            <div className="flex items-center justify-between mb-4 max-w-5.5xl mx-auto">
+            <div
+                className={`flex items-center mb-4 max-w-xl mx-auto justify-${bleMocked ? "between" : "center"}`}
+            >
                 <div>
                     <h2 className="text-2xl font-semibold text-foreground mb-1">
                         Analyse corporelle
                     </h2>
                     <p className="text-sm text-muted-foreground">
-                        {step === "waiting" && "En attente du scan…"}
-                        {step === "scanning" && "Scan du corps entier…"}
+                        {step === "waiting" && "En attente du scan..."}
+                        {step === "scanning" && "Scan du corps entier..."}
                         {step === "results" && `${PROBLEMS.length} problèmes détectés`}
                     </p>
                 </div>
 
-                {step !== "results" && (
+                {bleMocked && step !== "results" && (
                     <button
                         onClick={nextStep}
                         className="rounded-xl bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity"
